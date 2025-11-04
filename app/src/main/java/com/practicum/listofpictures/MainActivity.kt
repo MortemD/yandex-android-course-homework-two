@@ -46,14 +46,12 @@ class MainActivity : AppCompatActivity() {
         setContent {
             var gallery by remember { mutableStateOf(generateSamplePictures()) }
             var isGridLayout by remember { mutableStateOf(false) }
-            var searchText by remember {mutableStateOf("")} // №1
+            var searchText by remember { mutableStateOf("") } // №1
 
             MaterialTheme {
                 Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                ) {
-                    innerPadding ->
+                    modifier = Modifier.fillMaxSize(),
+                ) { innerPadding ->
                     Column(
                         Modifier.fillMaxSize()
                     ) {
@@ -62,9 +60,9 @@ class MainActivity : AppCompatActivity() {
                                 .fillMaxWidth()
                                 .padding(bottom = 30.dp)
                         ) {
-                            TextField (
+                            TextField(
                                 value = searchText,
-                                onValueChange = { searchText = it},
+                                onValueChange = { searchText = it },
                                 label = { Text("Поиск по автору") },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -74,8 +72,9 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         val searchByAuthorResults = if (searchText.isBlank()) {
-                            gallery
+                            gallery // Если поиск пустой - показываем всю галерею
                         } else {
+                            // Фильтруем по автору (без учета регистра)
                             gallery.filter {
                                 it.author.contains(searchText, ignoreCase = true)
                             }
@@ -83,35 +82,33 @@ class MainActivity : AppCompatActivity() {
 
 
                         if (isGridLayout) {
-                            LazyVerticalGrid (
+                            LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
                                 modifier = Modifier.padding(innerPadding)
-                            ){
+                            ) {
                                 items(searchByAuthorResults.size) { index ->
                                     ShowItem(
                                         picture = searchByAuthorResults[index],
                                         onPressed = { pressedItem ->
-                                            gallery = gallery.filter {it.id != pressedItem.id}
+                                            gallery = gallery.filter { it.id != pressedItem.id }
                                         }
                                     )
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             LazyColumn(
                                 modifier = Modifier.padding(innerPadding)
-                            ){
+                            ) {
                                 items(searchByAuthorResults.size) { index ->
                                     ShowItem(
                                         picture = searchByAuthorResults[index],
                                         onPressed = { pressedItem ->
-                                            gallery = gallery.filter {it.id != pressedItem.id}
+                                            gallery = gallery.filter { it.id != pressedItem.id }
                                         }
                                     )
                                 }
                             }
                         }
-
                     }
                     Column(
                         Modifier
@@ -127,10 +124,11 @@ class MainActivity : AppCompatActivity() {
                                 .clickable {
                                     //gallery = gallery.reversed()
                                     //isGridLayout =!isGridLayout
-                                    val newImage = getNewImage()
+                                    val newImage = getNewImage() // Создание нового изображения
+                                    // Проверка на существование изображения с таким же ID
                                     val imageExists = gallery.any { it.id == newImage.id }
                                     if (!imageExists) {
-                                        gallery += newImage
+                                        gallery += newImage // Если такого ID еще нет, то обавляем в галерею
                                     }
                                 },
                             imageVector = Icons.Filled.AddCircle,
@@ -145,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                                 // .alpha(0.6f)
                                 .clickable {
                                     //gallery = gallery.reversed()
-                                    isGridLayout =!isGridLayout
+                                    isGridLayout = !isGridLayout
                                     //gallery += getNewImage()
                                 },
                             imageVector = Icons.Filled.Refresh,

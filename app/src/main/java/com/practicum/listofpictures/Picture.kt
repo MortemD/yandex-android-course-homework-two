@@ -8,7 +8,7 @@ class Picture (
 
 fun getNewImage(): Picture {
     val url = urls[kotlin.random.Random.nextInt(0, urls.size)]
-    val id = kotlin.random.Random.nextInt(100, 999)
+    val id = kotlin.random.Random.nextInt(1, 999)
     val newImage= Picture (
         id,
         "Автор ${id}",
